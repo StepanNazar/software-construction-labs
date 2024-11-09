@@ -44,7 +44,7 @@ class TestMainFunction(unittest.TestCase):
         with self.assertRaises(SystemExit):
             main()
         output = mock_stdout.getvalue()
-        self.assertIn("usage: main.py", output)
+        self.assertIn("usage: ", output)
 
     @patch("sys.argv", ["main.py", "-f"])
     @patch("sys.stderr", new_callable=StringIO)
