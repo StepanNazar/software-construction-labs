@@ -39,14 +39,12 @@ def test_correct_amount(amount: str, stdout: str, mocker) -> None:
 def test_incorrect_amount(amount: str, mocker) -> None:
     stderr_regex = r"usage: .*\n.*error: Неправильний формат грошової суми\. Введіть у форматі x\.yy"
     mocker.patch("sys.argv", ["main.py", amount])
-    mocker.patch("sys.stdout", new_callable=StringIO)
     mocker.patch("sys.stderr", new_callable=StringIO)
     with pytest.raises(SystemExit):
         main()
     assert re.match(stderr_regex, sys.stderr.getvalue())
     mocker.patch("sys.argv", ["main.py"])
     mocker.patch("sys.stdin", StringIO(amount))
-    mocker.patch("sys.stdout", new_callable=StringIO)
     mocker.patch("sys.stderr", new_callable=StringIO)
     with pytest.raises(SystemExit):
         main()
