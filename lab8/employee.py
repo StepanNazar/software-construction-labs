@@ -41,17 +41,6 @@ class Employee(ABC):
         'Doe'
         >>> emp
         TestEmployee(ipn=1234567890, first_name='John', last_name='Doe')
-        >>> emp.calculate_taxed_salary()
-        9
-        >>> class TaxBiggerThanSalaryEmployee(Employee):
-        ...     def calculate_salary(self):
-        ...         return 1
-        ...     def calculate_tax(self, salary):
-        ...         return 10
-        ...
-        >>> emp = TaxBiggerThanSalaryEmployee(1234567890, "John", "Doe")
-        >>> emp.calculate_taxed_salary()
-        0
         >>> emp.ipn = 123
         Traceback (most recent call last):
             ...
@@ -76,11 +65,6 @@ class Employee(ABC):
     @abstractmethod
     def calculate_salary(self) -> float:
         """Calculate month average salary without taxes."""
-
-    def calculate_taxed_salary(self) -> float:
-        """Calculate month average salary after taxes."""
-        salary = self.calculate_salary()
-        return max(salary - self.calculate_tax(salary), 0)
 
     @abstractmethod
     def calculate_tax(self, salary: float) -> float:
@@ -210,7 +194,7 @@ class SoleEntrepreneurEmployee(Employee):
         self.worked_hours = worked_hours
 
     def calculate_salary(self) -> float:
-        return self.hourly_rate * self.worked_hours * SoleEntrepreneurEmployee.BONUS
+        return self.hourly_rate * self.worked_hours * self.BONUS
 
     def calculate_tax(self, salary: float) -> float:
         return salary * SINGLE_TAX_RATE + SINGLE_SOCIAL_CONTRIBUTION
