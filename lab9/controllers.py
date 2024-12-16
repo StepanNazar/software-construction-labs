@@ -62,6 +62,7 @@ class Controller:
             self.view.message(f"Task {id_} not found.")
             return
         task.status = status
+        self.view.message(f"Task {id_} status changed to {status.value}.")
 
     def remove_task(self):
         """Remove a task from the to-do list. Ask the user for the task ID."""
