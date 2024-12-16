@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from uuid import UUID
 
@@ -7,22 +8,26 @@ from models import Status
 
 
 class View:
-    def __init__(self, controller=None):
-        self.controller = controller
+    """View class for the To-Do List App."""
 
     def welcome_message(self):
+        """Show a welcome message to the user."""
         print("\nWelcome to the To-Do List App!\n")
 
     def exit_message(self):
+        """Show an exit message to the user."""
         print("\nThank you for using the To-Do List App!\n")
 
     def error_message(self, error):
-        print(f"Unexpected error: {error}")
+        """Show an error message to the user in the standard error stream."""
+        print(f"Unexpected error: {error}", file=sys.stderr)
 
     def message(self, message):
+        """Show a message to the user."""
         print(message)
 
     def show_tasks(self, tasks):
+        """Show a tasks in a table."""
         if not tasks:
             print("No tasks found.")
             return
@@ -48,7 +53,8 @@ class View:
             )
         )
 
-    def menu(self):
+    def get_menu_choice(self):
+        """Get a menu choice from the user."""
         print("\nPlease select an option:")
         print("1. Add a task")
         print("2. Change task status")
@@ -58,28 +64,10 @@ class View:
         print("6. Filter tasks")
         print("7. Show task by ID")
         print("8. Exit")
-        match input("Enter your choice: "):
-            case "1":
-                self.add_task()
-            case "2":
-                self.change_task_status()
-            case "3":
-                self.remove_task()
-            case "4":
-                self.edit_task()
-            case "5":
-                self.list_tasks()
-            case "6":
-                self.filter_tasks()
-            case "7":
-                self.show_task_by_id()
-            case "8":
-                self.controller.exit()
-            case _:
-                print("Invalid option. Please try again.")
-                self.menu()
+        return self.get_choice(1, 8)
 
-    def get_id(self):
+    def get_id(self) -> UUID:
+        """Get a task UUID from the user."""
         id_ = None
         while id_ is None:
             try:
@@ -88,10 +76,12 @@ class View:
                 pass
         return id_
 
-    def get_description(self):
+    def get_description(self) -> str:
+        """Get a description from the user. Can be an empty string."""
         return input("Enter task description: ")
 
-    def get_schedule_for(self):
+    def get_schedule_for(self) -> datetime | None:
+        """Get a deadline from the user. Return None if the user enters an empty string."""
         schedule_for = None
         while schedule_for is None:
             try:
@@ -103,46 +93,19 @@ class View:
                 pass
         return schedule_for
 
-    def get_status(self):
+    def get_status(self) -> Status:
+        """Get a status from the user."""
         status = None
         while status not in Status:
             status = input("Enter task status (ToDo, InProgress, Done): ")
         return Status(status)
 
-    def add_task(self):
-        description = self.get_description()
-        schedule_for = self.get_schedule_for()
-        self.controller.add_task(description, schedule_for)
-
-    def change_task_status(self):
-        id_ = self.get_id()
-        status = self.get_status()
-        self.controller.edit_task(id_, status=status)
-
-    def remove_task(self):
-        id_ = self.get_id()
-        self.controller.remove_task(id_)
-
-    def edit_task(self):
-        id_ = self.get_id()
-        print("Enter new task details(leave blank to keep the same):")
-        description = self.get_description()
-        schedule_for = self.get_schedule_for()
-        self.controller.edit_task(
-            id_, description=description, schedule_for=schedule_for
-        )
-
-    def show_task_by_id(self):
-        id_ = self.get_id()
-        task = self.controller.get_task(id_)
-        if task:
-            self.show_tasks([task])
-        else:
-            self.message(f"Task {id_} not found.")
-
-    def filter_tasks(self):
-        status = self.get_status()
-        self.show_tasks(self.controller.filter_tasks(status))
-
-    def list_tasks(self):
-        self.show_tasks(self.controller.list_tasks())
+    def get_choice(self, min_: int, max_: int) -> int:
+        """Get an integer choice between min_ and max_."""
+        choice = None
+        while choice is None or (choice < min_ or choice > max_):
+            try:
+                choice = int(input("Enter your choice: "))
+            except ValueError:
+                pass
+        return choice

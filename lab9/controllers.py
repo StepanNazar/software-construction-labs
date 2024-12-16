@@ -1,41 +1,87 @@
 import sys
 
-from models import Task, Status
+from models import Task
 
 
 class Controller:
+    """Controller class for the To-Do List App."""
+
     def __init__(self, view):
         self.view = view
-        view.controller = self
 
     def run(self):
+        """Run the To-Do List App."""
         self.view.welcome_message()
         while True:
             try:
-                self.view.menu()
+                choice = self.view.get_menu_choice()
+                self.process_choice(choice)
             except KeyboardInterrupt:
                 self.exit()
             except Exception as e:
                 self.view.error_message(e)
 
-    def add_task(self, description: str, schedule_for):
+    def process_choice(self, choice):
+        """Process the user's menu choice."""
+        match choice:
+            case 1:
+                self.add_task()
+            case 2:
+                self.change_task_status()
+            case 3:
+                self.remove_task()
+            case 4:
+                self.edit_task()
+            case 5:
+                self.list_tasks()
+            case 6:
+                self.filter_tasks()
+            case 7:
+                self.show_task_by_id()
+            case 8:
+                self.exit()
+
+    def add_task(self):
+        """Add a new task to the to-do list. Ask the user for a description and a schedule for the task."""
+        description = self.view.get_description()
+        schedule_for = self.view.get_schedule_for()
+        if schedule_for is None:
+            self.view.message("Please enter a schedule for the task.")
+            return
         task = Task(description, schedule_for)
         self.view.message(f"Task {task.id} added.")
 
-    def remove_task(self, id_):
+    def change_task_status(self):
+        """Change the status of a task in the to-do list. Ask the user for the task ID and the new status."""
+        id_ = self.view.get_id()
+        status = self.view.get_status()
+        if not status:
+            return
+        task = Task.get_task(id_)
+        if task is None:
+            self.view.message(f"Task {id_} not found.")
+            return
+        task.status = status
+
+    def remove_task(self):
+        """Remove a task from the to-do list. Ask the user for the task ID."""
+        id_ = self.view.get_id()
         task = Task.remove_task(id_)
         if task is None:
             self.view.message(f"Task {id_} not found.")
             return
         self.view.message(f"Task {id_} removed.")
 
-    def edit_task(self, id_, status=None, description=None, schedule_for=None):
+    def edit_task(self):
+        """Edit a task in the to-do list. Ask the user for the task ID and the new task details."""
+        id_ = self.view.get_id()
+        self.view.message("Enter new task details(leave blank to keep the same):")
+        description = self.view.get_description()
+        schedule_for = self.view.get_schedule_for()
         task = Task.get_task(id_)
         if task is None:
             self.view.message(f"Task {id_} not found.")
             return
-        if status:
-            task.status = status
         if description:
             task.description = description
         if schedule_for:
@@ -43,14 +89,26 @@ class Controller:
         self.view.message(f"Task {id_} edited.")
 
     def list_tasks(self):
-        return Task.list_tasks()
+        """List all tasks in the to-do list."""
+        tasks = Task.list_tasks()
+        self.view.show_tasks(tasks)
 
-    def filter_tasks(self, status):
-        return Task.filter_tasks_by_status(status)
+    def filter_tasks(self):
+        """Filter tasks by status. Ask the user for a status."""
+        status = self.view.get_status()
+        tasks = Task.filter_tasks_by_status(status)
+        self.view.show_tasks(tasks)
 
-    def get_task(self, id_):
-        return Task.get_task(id_)
+    def show_task_by_id(self):
+        """Show a task by its unique identifier. Ask the user for the task ID."""
+        id_ = self.view.get_id()
+        task = Task.get_task(id_)
+        if task is None:
+            self.view.message(f"Task {id_} not found.")
+            return
+        self.view.show_tasks([task])
 
     def exit(self):
+        """Exit the To-Do List App."""
         self.view.exit_message()
         sys.exit(0)
