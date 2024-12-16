@@ -68,14 +68,14 @@ def test_get_status(mock_input, view):  # noqa
     "builtins.input",
     side_effect=["123e4567-e89b-12d3", "123e4567-e89b-12d3-a456-426614174000"],
 )
-def test_get_id(mock_input, view): # noqa
+def test_get_id(mock_input, view):  # noqa
     """Test getting a task ID."""
     id_ = view.get_id()
     assert id_ == UUID("123e4567-e89b-12d3-a456-426614174000")
 
 
 @patch("builtins.input", side_effect=["a", "0", "10", "1"])
-def test_get_menu_choice(mock_input, view): # noqa
+def test_get_menu_choice(mock_input, view):  # noqa
     """Test getting a menu choice."""
     choice = view.get_menu_choice()
     assert choice == 1

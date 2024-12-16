@@ -1,15 +1,16 @@
 import sys
 
+from view import View
 from models import Task
 
 
 class Controller:
     """Controller class for the To-Do List App."""
 
-    def __init__(self, view):
+    def __init__(self, view: View):
         self.view = view
 
-    def run(self):
+    def run(self) -> None:
         """Run the To-Do List App."""
         self.view.welcome_message()
         while True:
@@ -21,7 +22,7 @@ class Controller:
             except Exception as e:
                 self.view.error_message(e)
 
-    def process_choice(self, choice):
+    def process_choice(self, choice: int) -> None:
         """Process the user's menu choice."""
         match choice:
             case 1:
@@ -41,8 +42,9 @@ class Controller:
             case 8:
                 self.exit()
 
-    def add_task(self):
-        """Add a new task to the to-do list. Ask the user for a description and a schedule for the task."""
+    def add_task(self) -> None:
+        """Add a new task to the to-do list.
+        Ask the user for a description and a schedule for the task."""
         description = self.view.get_description()
         schedule_for = self.view.get_schedule_for()
         if schedule_for is None:
@@ -51,8 +53,9 @@ class Controller:
         task = Task(description, schedule_for)
         self.view.message(f"Task {task.id} added.")
 
-    def change_task_status(self):
-        """Change the status of a task in the to-do list. Ask the user for the task ID and the new status."""
+    def change_task_status(self) -> None:
+        """Change the status of a task in the to-do list.
+        Ask the user for the task ID and the new status."""
         id_ = self.view.get_id()
         status = self.view.get_status()
         if not status:
@@ -64,7 +67,7 @@ class Controller:
         task.status = status
         self.view.message(f"Task {id_} status changed to {status.value}.")
 
-    def remove_task(self):
+    def remove_task(self) -> None:
         """Remove a task from the to-do list. Ask the user for the task ID."""
         id_ = self.view.get_id()
         task = Task.remove_task(id_)
@@ -73,7 +76,7 @@ class Controller:
             return
         self.view.message(f"Task {id_} removed.")
 
-    def edit_task(self):
+    def edit_task(self) -> None:
         """Edit a task in the to-do list. Ask the user for the task ID and the new task details."""
         id_ = self.view.get_id()
         self.view.message("Enter new task details(leave blank to keep the same):")
@@ -89,18 +92,18 @@ class Controller:
             task.schedule_for = schedule_for
         self.view.message(f"Task {id_} edited.")
 
-    def list_tasks(self):
+    def list_tasks(self) -> None:
         """List all tasks in the to-do list."""
         tasks = Task.list_tasks()
         self.view.show_tasks(tasks)
 
-    def filter_tasks(self):
+    def filter_tasks(self) -> None:
         """Filter tasks by status. Ask the user for a status."""
         status = self.view.get_status()
         tasks = Task.filter_tasks_by_status(status)
         self.view.show_tasks(tasks)
 
-    def show_task_by_id(self):
+    def show_task_by_id(self) -> None:
         """Show a task by its unique identifier. Ask the user for the task ID."""
         id_ = self.view.get_id()
         task = Task.get_task(id_)
@@ -109,7 +112,7 @@ class Controller:
             return
         self.view.show_tasks([task])
 
-    def exit(self):
+    def exit(self) -> None:
         """Exit the To-Do List App."""
         self.view.exit_message()
         sys.exit(0)

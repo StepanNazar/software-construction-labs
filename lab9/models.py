@@ -46,8 +46,8 @@ class Task:
         description: str,
         schedule_for: datetime,
         status: Status = Status.TODO,
-        created_at: datetime = None,
-        id_: UUID = None,
+        created_at: datetime | None = None,
+        id_: UUID | None = None,
     ):
         self.description = description
         self.schedule_for = schedule_for
@@ -59,22 +59,22 @@ class Task:
         self.__tasks[self.id] = self
 
     @classmethod
-    def get_task(cls, id_: UUID):
+    def get_task(cls, id_: UUID) -> "Task | None":
         """Get a task by its unique identifier."""
         return cls.__tasks.get(id_)
 
     @classmethod
-    def remove_task(cls, id_: UUID):
+    def remove_task(cls, id_: UUID) -> "Task | None":
         """Remove a task from memory by its unique identifier."""
         return cls.__tasks.pop(id_, None)
 
     @classmethod
-    def list_tasks(cls):
+    def list_tasks(cls) -> list["Task"]:
         """List all tasks."""
         return list(cls.__tasks.values())
 
     @classmethod
-    def filter_tasks_by_status(cls, status: Status):
+    def filter_tasks_by_status(cls, status: Status) -> list["Task"]:
         """List tasks by status."""
         return list(task for task in cls.__tasks.values() if task.status == status)
 

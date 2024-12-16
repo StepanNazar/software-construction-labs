@@ -4,29 +4,29 @@ from uuid import UUID
 
 from tabulate import tabulate
 
-from models import Status
+from models import Status, Task
 
 
 class View:
     """View class for the To-Do List App."""
 
-    def welcome_message(self):
+    def welcome_message(self) -> None:
         """Show a welcome message to the user."""
         print("\nWelcome to the To-Do List App!\n")
 
-    def exit_message(self):
+    def exit_message(self) -> None:
         """Show an exit message to the user."""
         print("\nThank you for using the To-Do List App!\n")
 
-    def error_message(self, error):
+    def error_message(self, error: Exception) -> None:
         """Show an error message to the user in the standard error stream."""
         print(f"Unexpected error: {error}", file=sys.stderr)
 
-    def message(self, message):
+    def message(self, message: str) -> None:
         """Show a message to the user."""
         print(message)
 
-    def show_tasks(self, tasks):
+    def show_tasks(self, tasks: list[Task]) -> None:
         """Show a tasks in a table."""
         if not tasks:
             print("No tasks found.")
@@ -53,8 +53,8 @@ class View:
             )
         )
 
-    def get_menu_choice(self):
-        """Get a menu choice from the user."""
+    def get_menu_choice(self) -> int:
+        """Get a menu choice from the user. Return an integer between 1 and 8."""
         print("\nPlease select an option:")
         print("1. Add a task")
         print("2. Change task status")
